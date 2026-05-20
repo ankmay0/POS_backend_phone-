@@ -19,6 +19,10 @@ TUNNEL_NAME="${TUNNEL_NAME:-pos-tunnel}"
 LOCAL_PORT="${LOCAL_PORT:-8000}"
 CONFIG_FILE="$HOME/.cloudflared/config.yml"
 
+# Termux ships without a CA bundle that cloudflared (a Go binary) can find.
+# `pkg install ca-certificates` puts the bundle here; point Go's TLS at it.
+export SSL_CERT_FILE="${SSL_CERT_FILE:-$PREFIX/etc/tls/cert.pem}"
+
 mkdir -p "$LOG_DIR"
 
 notify() {

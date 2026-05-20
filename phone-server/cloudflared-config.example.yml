@@ -1,0 +1,20 @@
+# Copy to ~/.cloudflared/config.yml on the phone.
+# Replace TUNNEL_UUID with the UUID printed by `cloudflared tunnel create pos-tunnel`.
+# Replace pos.yourdomain.com with the hostname you routed via:
+#   cloudflared tunnel route dns pos-tunnel pos.yourdomain.com
+
+tunnel: TUNNEL_UUID
+credentials-file: /data/data/com.termux/files/home/.cloudflared/TUNNEL_UUID.json
+
+ingress:
+  - hostname: pos.yourdomain.com
+    service: http://localhost:8000
+    originRequest:
+      # Socket.IO needs WebSocket upgrades — Cloudflare Tunnel supports these
+      # transparently; no extra config needed. Keep these timeouts generous
+      # so long-lived WS connections aren't dropped.
+      connectTimeout: 30s
+      noTLSVerify: false
+      disableChunkedEncoding: false
+  # Catch-all (required) — anything else 404s.
+  - service: http_status:404
